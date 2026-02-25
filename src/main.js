@@ -29,6 +29,36 @@ function createBoard() {
     }
   }
 
+  function createDiagonal(x1, y1, x2, y2) {
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+    line.setAttribute('x1', x1)
+    line.setAttribute('y1', y1)
+    line.setAttribute('x2', x2)
+    line.setAttribute('y2', y2)
+    line.setAttribute('stroke', '#000')
+    line.setAttribute('stroke-width', '1')
+    return line
+  }
+
+  function addPalaceDiagonals() {
+    const palaceTop = { colStart: 3, colEnd: 5, rowStart: 0, rowEnd: 2 }
+    const palaceBottom = { colStart: 3, colEnd: 5, rowStart: 7, rowEnd: 9 }
+
+    ;[palaceTop, palaceBottom].forEach((palace) => {
+      const { colStart, colEnd, rowStart, rowEnd } = palace
+      svg.appendChild(createDiagonal(
+        colStart * CELL, rowStart * CELL,
+        colEnd * CELL, rowEnd * CELL
+      ))
+      svg.appendChild(createDiagonal(
+        colStart * CELL, rowEnd * CELL,
+        colEnd * CELL, rowStart * CELL
+      ))
+    })
+  }
+
+  addPalaceDiagonals()
+
   const riverText = document.createElementNS('http://www.w3.org/2000/svg', 'text')
   riverText.setAttribute('x', WIDTH / 2)
   riverText.setAttribute('y', (4.5 + 0.5) * CELL)
@@ -41,8 +71,8 @@ function createBoard() {
 
   svg.addEventListener('click', (e) => {
     if (e.target.tagName === 'rect') {
-      const col = parseInt(e.target.dataset.col)
-      const row = parseInt(e.target.dataset.row)
+      const col = Math.min(8, Math.max(0, parseInt(e.target.dataset.col)))
+      const row = Math.min(9, Math.max(0, parseInt(e.target.dataset.row)))
       console.log(`Clicked: (${col}, ${row})`)
     }
   })
